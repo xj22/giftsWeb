@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>代露娃应援站</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet"> <!-- 行书字体 -->
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', 'Ma Shan Zheng'; background: #f8f9fa; position: relative; overflow-x: hidden; }
+                /* 移动端响应式调整 */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2.5rem !important;
+                line-height: 1.2;
+            }
+            .navbar a { display: none; }
+            .navbar span { font-size: 1.2rem !important; }
+            #roles h2 { font-size: 2rem !important; }
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .gallery img { height: 150px; }
+            .music-player { bottom: 10px; right: 10px; }
+            #music-btn { padding: 8px 15px; font-size: 14px; }
+            .letter-container { padding: 20px; }
+        }
+        @media (max-width: 480px) {
+            .hero-section h1 { font-size: 2rem !important; }
+            .gallery { grid-template-columns: 1fr; }
+        }
+
+        /* 触摸优化 */
+        .role-card, #music-btn {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 原有样式保持不变 */
+        .hero-section h1 {
+            background: linear-gradient(45deg, #ff69b4 20%, #ff8ac2 40%, #f3d7ff 60%, #a18cff 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255,105,180,0.6), 0 0 30px rgba(163,104,255,0.4), 2px 2px 4px rgba(0,0,0,0.3);
+            animation: title-glow 3s ease-in-out infinite alternate;
+        }
+		/* 新增标题特效 - 开始 */
+        .hero-section h1 {
+            background: linear-gradient(45deg, 
+                #ff69b4 20%, 
+                #ff8ac2 40%, 
+                #f3d7ff 60%, 
+                #a18cff 80%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 
+                0 0 15px rgba(255,105,180,0.6),
+                0 0 30px rgba(163,104,255,0.4),
+                2px 2px 4px rgba(0,0,0,0.3);
+            animation: title-glow 3s ease-in-out infinite alternate;
+        }
+
+        #roles h2 {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 3rem;
+            background: linear-gradient(
+                135deg,
+                #e83e8c 25%,
+                #ff1493 50%,
+                #ff6b6b 75%,
+                #ffd700 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 
+                0 0 20px rgba(232,62,140,0.5),
+                0 0 10px rgba(255,215,0,0.3);
+            position: relative;
+            display: inline-block;
+            padding: 0 20px;
+        }
+
+        #roles h2::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -10px;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent 10%,
+                #ff69b4 50%,
+                transparent 90%
+            );
+            animation: line-spark 2s infinite;
+        }
+
+        @keyframes title-glow {
+            0% { 
+                background-position: 0% 50%;
+                filter: hue-rotate(0deg);
+            }
+            100% { 
+                background-position: 100% 50%;
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        @keyframes line-spark {
+            0% { opacity: 0; left: -20% }
+            50% { opacity: 1; }
+            100% { opacity: 0; left: 120% }
+        }
+        /* 新增标题特效 - 结束 */
+
+        /* 原有样式保持不变 */
+        .music-player { /*...*/ }
+        #music-btn { /*...*/ }
+        .navbar { /*...*/ }
+        .hero-section { /*...*/ }
+        .role-card { /*...*/ }
+        .gallery { /*...*/ }
+        /* 新增音乐播放器样式 */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        #music-btn {
+            background: rgba(255,182,193,0.9);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            font-family: 'ZCOOL XiaoWei';
+        }
+        #music-btn:hover {
+            transform: scale(1.1);
+            background: #ff69b4;
+        }
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* 封面区 */
+        .hero-section {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)),
+                        url('images/cover.jpg') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        /* 角色卡片 */
+        .role-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .role-card:hover { transform: translateY(-10px); }
+
+                /* 照片墙增强样式 */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            position: relative;
+        }
+        .gallery img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: brightness(90%) saturate(120%) hue-rotate(-10deg);
+            position: relative;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .gallery img:hover {
+            transform: scale(1.05) rotate(2deg);
+            filter: brightness(100%) saturate(150%) hue-rotate(-5deg);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            border-color: #ff69b4;
+            z-index: 2;
+        }
+
+        /* 新增相框装饰 */
+        .gallery::after {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            z-index: -1;
+            background: linear-gradient(45deg, #ff69b4, #ffb6c1, #ffffff);
+            opacity: 0.3;
+        }
+
+        /* 图片标签 */
+        .img-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 182, 193, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item {
+            position: relative;
+        }
+        .gallery-item:hover .img-label {
+            opacity: 1;
+        }
+
+        /* 粉红泡泡 */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 182, 193, 0.7);
+            border-radius: 50%;
+            animation: float 5s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+       /* 增强弹幕样式 */
+        .barrage {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            right: 0;
+            white-space: nowrap;
+            color: #fff;
+            font-size: 18px;
+            animation: barrage 20s linear infinite;
+            z-index: 100;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-weight: bold;
+        }
+
+        @keyframes barrage {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* 粉色修饰 */
+        .pink-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 182, 193, 0.1);
+            pointer-events: none;
+        }
+
+        /* 信件样式 */
+        .letter-section {
+            padding: 50px 20px;
+            background: #fff5f7;
+            position: relative;
+        }
+        .letter-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-family: 'ZCOOL XiaoWei', cursive; /* 行书字体 */
+            line-height: 1.8;
+            color: #333;
+        }
+        .letter-container h2 {
+            text-align: center;
+            color: #e83e8c;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        .letter-container p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+        .letter-container .signature {
+            text-align: right;
+            font-style: italic;
+            margin-top: 30px;
+            color: #666;
+        }
+		.music-player {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    animation: float 3s ease-in-out infinite; /* 复用原有漂浮动画 */
+}
+
+#music-btn {
+    background: rgba(255,182,193,0.9);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 30px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    font-family: 'ZCOOL XiaoWei';
+    font-size: 16px;
+    backdrop-filter: blur(5px); /* 毛玻璃效果 */
+}
+
+#music-btn:hover {
+    transform: scale(1.1) rotate(-2deg);
+    background: #ff69b4;
+    box-shadow: 0 6px 20px rgba(255,105,180,0.4);
+}
+    </style>
+</head>
+<body>
+    <!-- 导航 -->
+    <nav class="navbar">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <span style="font-size: 24px; color: #e83e8c;">代露娃</span>
+            <div style="float: right;">
+                <a href="#home" style="margin: 0 15px; color: #666;">首页</a>
+                <a href="#roles" style="margin: 0 15px; color: #666;">角色</a>
+                <a href="#letter" style="margin: 0 15px; color: #666;">信件</a>
+                <a href="#gallery" style="margin: 0 15px; color: #666;">相册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 封面 -->
+    <section class="hero-section">
+        <div>
+            <h1 style="font-size: 4rem; text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">星辰为路 繁花似锦</h1>
+            <p style="margin-top: 20px; font-size: 1.2rem;">2025.4.29 - 永恒闪耀</p>
+        </div>
+        <div class="pink-overlay"></div>
+    </section>
+
+    <!-- 角色展示 -->
+    <section id="roles" style="padding: 50px 20px; background: white; position: relative;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h2 style="text-align: center; margin-bottom: 40px;">娃娃生日快乐！</h2>
+            
+            <!-- 阿念 -->
+            <div class="role-card">
+                <img src="images/role_anian.jpg" alt="阿念">
+				<img src="images/role_anian1.jpg" alt="阿念">
+                <div style="padding: 20px;">
+                    <h3 style="color: #e83e8c;">皓翎王姬·阿念</h3>
+                    <p style="margin-top: 10px; color: #666;">"从娇蛮公主到守护者，天真与坚韧的完美融合"</p>
+                </div>
+                <div class="pink-overlay"></div>
+            </div>
+
+            <!-- 茯苓 -->
+            <div class="role-card">
+                <img src="images/role_fuling.jpg" alt="茯苓">
+				<img src="images/role_fuling2.jpg" alt="茯苓">
+                <div style="padding: 20px;">
+                    <h3 style="color: #6f42c1;">妖君·茯苓</h3>
+                    <p style="margin-top: 10px; color: #666;">"暗夜中的火焰，疯魔与脆美的极致演绎"</p>
+                </div>
+                <div class="pink-overlay"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 信件 -->
+    <section id="letter" class="letter-section">
+        <div class="letter-container">
+            <h2>致代露娃的一封信</h2>
+            <p>亲爱的露娃：</p>
+            <p>展信佳！</p>
+            <p>作为一名默默关注你许久的粉丝，我一直想通过文字表达对你的喜爱与支持。从《长相思》中娇憨天真的阿念，到《白月梵星》里冷艳疯魔的茯苓，你用一个个鲜活的角色让我感受到演员的无限可能。今天是你的生日，愿这封信能将我的祝福与敬意传递给你。</p>
+            <p><strong>角色演绎：从“阿念”到“茯苓”的蜕变</strong></p>
+            <p>初识你是在《长相思》中，你将阿念的刁蛮与纯真演绎得淋漓尽致。那个看似任性却心怀赤诚的小公主，从与家人相依的娇憨，到肩负家国大义时的成长，每一处情感的转变都细腻动人。尤其是阿念在战场上的觉醒，你曾说“她的故事像我们的人生，在错误中成长”，这份对角色的深刻理解让观众与你共鸣。</p>
+            <p>而《白月梵星》中的茯苓妖君，则彻底颠覆了我的想象。你以一身黑衣、手持云火弓的形象登场，用“杀人不眨眼”的狠厉与恢复记忆后的破碎感，诠释了角色的复杂性。最令我震撼的，是你在表演细节上的极致追求：为贴合“妖女”的神秘感，主动提议在唇上贴红钻，甚至为此全天不进食。这种对角色全身心的投入，让我看到你对表演的敬畏与热爱。</p>
+            <p><strong>荧幕之外的感动：敬业与真诚</strong></p>
+            <p>你的“钝感力”让我印象深刻——面对角色时，你愿意花数月时间研读剧本，甚至在见导演前已完成16集的功课。这种脚踏实地的态度，让你在竞争激烈的演艺圈中稳步前行。你曾说“给自己五年时间，若还能有戏拍便坚持”，如今茯苓的出圈印证了坚持的力量。</p>
+            <p>更让我钦佩的是你对生活的清醒认知。无论是坦言“对夸奖感到惶恐”，还是期待挑战警匪题材的突破，你始终保持着对未来的规划与谦逊。这份真诚，让你在荧幕内外都散发着独特的光芒。</p>
+            <p><strong>生日祝福：愿星辰常伴，前路繁花</strong></p>
+            <p>在你生日之际，我想送上最真挚的祝愿：</p>
+            <ul>
+                <li>愿你永远保有对表演的热忱，在角色中探索更广阔的天地，无论是古偶的仙侠世界，还是现实题材的烟火人间，我们都会为你喝彩。</li>
+                <li>愿你被时光温柔以待，在忙碌的拍摄中照顾好自己。记得按时吃饭，别再为角色“饿肚子”啦！（虽然茯苓的红钻造型真的很惊艳！）</li>
+                <li>愿你的坚持终得回响，期待你未来解锁更多“反差型”角色，比如警匪剧中的飒爽女警，或是现实题材中的坚韧女性——你值得被更多人看见！</li>
+            </ul>
+            <p>最后，感谢你用角色为我们编织了无数动人的故事。无论未来你选择怎样的道路，请记得有一群粉丝始终支持你，为你的每一次突破欢呼，也为你的每一份真诚感动。</p>
+            <p>生日快乐，代露娃！</p>
+            <p>愿你岁岁平安，星途璀璨！</p>
+            <div class="signature">
+                <p>此致</p>
+                <p>敬礼！</p>
+                <p>一位被你深深折服的粉丝</p>
+                <p>2025年3月21日</p>
+            </div>
+        </div>
+        <div class="pink-overlay"></div>
+    </section>
+
+    <!-- 照片墙 -->
+    <section id="gallery" style="padding: 50px 20px; position: relative;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h2 style="text-align: center; margin-bottom: 40px;">光影瞬间</h2>
+            <div class="gallery">
+                <img src="images/gallery1.jpg" alt="瞬间1">
+                <img src="images/gallery2.jpg" alt="瞬间2">
+                <img src="images/gallery3.jpg" alt="瞬间3">
+                <img src="images/gallery4.jpg" alt="瞬间4">
+                <img src="images/gallery5.jpg" alt="瞬间5">
+                <img src="images/gallery6.jpg" alt="瞬间6">
+                <img src="images/gallery7.jpg" alt="瞬间7">
+                <img src="images/gallery8.jpg" alt="瞬间8">
+				<img src="images/gallery9.jpg" alt="瞬间9">
+				<img src="images/gallery10.jpg" alt="瞬间10">
+				<img src="images/gallery11.jpg" alt="瞬间11">
+				<img src="images/gallery12.jpg" alt="瞬间12">
+            </div>
+        </div>
+        <div class="pink-overlay"></div>
+    </section>
+            <div class="music-player">
+        <audio id="bgm" loop volume="0.5">
+            <source src="music/bgm.mp3" type="audio/mpeg">
+            您的浏览器不支持音频播放
+        </audio>
+        <button id="music-btn">🎵 播放音乐</button>
+    </div>
+    <script>
+	    const audio = document.getElementById('bgm');
+        const musicBtn = document.getElementById('music-btn');
+        let isPlaying = false;
+
+        // 图片交互增强
+        document.querySelectorAll('.gallery img').forEach(img => {
+            // 悬停缩放
+            img.addEventListener('mouseover', () => {
+                img.style.transform = 'scale(1.05) rotate(2deg)';
+            });
+            img.addEventListener('mouseout', () => {
+                img.style.transform = 'scale(1) rotate(0deg)';
+            });
+
+            // 添加包装容器
+            const wrapper = document.createElement('div');
+            wrapper.className = 'gallery-item';
+            const label = document.createElement('div');
+            label.className = 'img-label';
+            label.textContent = img.alt;
+            img.parentNode.replaceChild(wrapper, img);
+            wrapper.appendChild(img);
+            wrapper.appendChild(label);
+
+            // 初始化随机旋转
+            img.style.transform = `rotate(${Math.random() * 6 - 3}deg)`;
+        });
+        // 添加粉红泡泡
+        const body = document.body;
+        for (let i = 0; i < 50; i++) {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.style.width = `${Math.random() * 30 + 10}px`;
+            bubble.style.height = bubble.style.width;
+            bubble.style.left = `${Math.random() * 100}%`;
+            bubble.style.top = `${Math.random() * 100}%`;
+            bubble.style.animationDuration = `${Math.random() * 5 + 3}s`;
+            body.appendChild(bubble);
+        }
+
+        // 增加弹幕系统
+        const messages = [
+		    "✨娃娃生日快乐！", "🌸代露娃最美！", "🎉阿念永远的神！",
+            "🔥茯苓太帅了！", "💖生日快乐！", "🎂星途璀璨！",
+            "💫演技炸裂！", "❤️永远支持你！", "🌟未来可期！",
+            "🌺四月繁花为你开"];
+        const colors = ["#e83e8c", "#6f42c1", "#ffc107", "#28a745", "#17a2b8"];
+		
+        for (let i = 0; i < 20; i++) {
+            const barrage = document.createElement('div');
+            barrage.className = 'barrage';
+            barrage.textContent = messages[Math.floor(Math.random() * messages.length)];
+            barrage.style.color = colors[Math.floor(Math.random() * colors.length)];
+            barrage.style.top = `${Math.random() * 100}%`;
+            barrage.style.animationDuration = `${Math.random() * 20 + 10}s`; // 弹幕速度更慢
+            body.appendChild(barrage);
+        }
+		
+         // 音乐按钮点击事件
+         musicBtn.addEventListener('click', (e) => {
+              e.stopPropagation(); // 防止事件冒泡
+              toggleMusic();
+         });
+
+        // 音乐切换函数
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.innerHTML = "🎵 播放音乐";
+            } else {
+                audio.play().catch((error) => {
+                    musicBtn.innerHTML = "▶ 点击播放";
+                });
+                musicBtn.innerHTML = "🎵 暂停音乐";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // 绑定按钮点击事件
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMusic();
+        });
+
+        // 首次交互自动播放
+        document.addEventListener('click', function initAudio() {
+            audio.play().then(() => {
+                musicBtn.innerHTML = "🎵 暂停音乐";
+                isPlaying = true;
+            }).catch(() => {
+                musicBtn.innerHTML = "▶ 点击播放";
+            });
+            document.removeEventListener('click', initAudio);
+        }, { once: true });
+
+        // 音量控制提示
+        audio.addEventListener('volumechange', () => {
+            if (audio.volume < 0.1) {
+                musicBtn.innerHTML = "🔇 静音中";
+                setTimeout(() => {
+                    musicBtn.innerHTML = isPlaying ? "🎵 暂停音乐" : "🎵 播放音乐";
+                }, 1500);
+            }
+        });
+    </script>
+</body>
+</html>
