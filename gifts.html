@@ -5,48 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>代露娃应援站</title>
     <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet"> <!-- 行书字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* 基础样式 */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Microsoft YaHei', 'Ma Shan Zheng'; background: #f8f9fa; position: relative; overflow-x: hidden; }
-                /* 移动端响应式调整 */
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+        .hamburger {
+            display: none;
+            float: right;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #e83e8c;
+            padding: 10px;
+        }
+        .nav-links {
+            float: right;
+        }
+        .navbar a {
+            margin: 0 15px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        /* 移动端适配 */
         @media (max-width: 768px) {
+            .navbar a { display: none; }
+            .hamburger { display: block; }
+            .navbar.active .nav-links {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(255,255,255,0.98);
+                padding: 15px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
             .hero-section h1 {
                 font-size: 2.5rem !important;
-                line-height: 1.2;
+                padding: 0 15px;
+                word-break: keep-all;
             }
-            .navbar a { display: none; }
-            .navbar span { font-size: 1.2rem !important; }
-            #roles h2 { font-size: 2rem !important; }
-            .gallery {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
+            .role-card {
+                margin: 10px 0;
+                border-radius: 10px;
             }
-            .gallery img { height: 150px; }
-            .music-player { bottom: 10px; right: 10px; }
-            #music-btn { padding: 8px 15px; font-size: 14px; }
-            .letter-container { padding: 20px; }
-        }
-        @media (max-width: 480px) {
-            .hero-section h1 { font-size: 2rem !important; }
-            .gallery { grid-template-columns: 1fr; }
+            .gallery img {
+                height: 180px !important;
+            }
+            .music-player {
+                bottom: 60px !important;
+                right: 10px !important;
+            }
+            .letter-container {
+                padding: 25px;
+                font-size: 15px;
+            }
         }
 
-        /* 触摸优化 */
-        .role-card, #music-btn {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* 原有样式保持不变 */
-        .hero-section h1 {
-            background: linear-gradient(45deg, #ff69b4 20%, #ff8ac2 40%, #f3d7ff 60%, #a18cff 80%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(255,105,180,0.6), 0 0 30px rgba(163,104,255,0.4), 2px 2px 4px rgba(0,0,0,0.3);
-            animation: title-glow 3s ease-in-out infinite alternate;
-        }
-		/* 新增标题特效 - 开始 */
+        //* 新增标题特效 - 开始 */
         .hero-section h1 {
             background: linear-gradient(45deg, 
                 #ff69b4 20%, 
@@ -352,15 +381,16 @@
     </style>
 </head>
 <body>
-    <!-- 导航 -->
+    <!-- 导航栏 -->
     <nav class="navbar">
         <div style="max-width: 1200px; margin: 0 auto;">
             <span style="font-size: 24px; color: #e83e8c;">代露娃</span>
-            <div style="float: right;">
-                <a href="#home" style="margin: 0 15px; color: #666;">首页</a>
-                <a href="#roles" style="margin: 0 15px; color: #666;">角色</a>
-                <a href="#letter" style="margin: 0 15px; color: #666;">信件</a>
-                <a href="#gallery" style="margin: 0 15px; color: #666;">相册</a>
+            <button class="hamburger">☰</button>
+            <div class="nav-links">
+                <a href="#home">首页</a>
+                <a href="#roles">角色</a>
+                <a href="#letter">信件</a>
+                <a href="#gallery">相册</a>
             </div>
         </div>
     </nav>
@@ -464,8 +494,33 @@
         </audio>
         <button id="music-btn">🎵 播放音乐</button>
     </div>
+
     <script>
-	    const audio = document.getElementById('bgm');
+        // 汉堡菜单交互
+        const hamburger = document.querySelector('.hamburger');
+        const navbar = document.querySelector('.navbar');
+        hamburger.addEventListener('click', () => {
+            navbar.classList.toggle('active');
+        });
+
+        // 图片懒加载
+        const lazyImages = document.querySelectorAll('img');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    observer.unobserve(img);
+                }
+            });
+        });
+        lazyImages.forEach(img => {
+            img.dataset.src = img.src;
+            img.src = 'placeholder.jpg'; // 需准备占位图
+            observer.observe(img);
+        });
+
+ const audio = document.getElementById('bgm');
         const musicBtn = document.getElementById('music-btn');
         let isPlaying = false;
 
